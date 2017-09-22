@@ -1,0 +1,145 @@
+/* Viewport Variables */
+$desktop: 'only screen and (min-width : 993px)';
+$tablet: 'only screen and (min-width:601px) and (max-width:992px)';
+$mobile: 'only screen and (min-width:50px) and (max-width:600px)';
+$baseColor: #5c6bc0;
+
+.drz-h4 {
+  margin: 30px 0;
+}
+
+.white-text {
+  color: white;
+}
+
+.profile-pic{
+  background-size: cover;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid white;
+  margin: 85px auto 0;
+}
+
+.drzNav-logo {
+  color: white;
+  font-family: 'Damion', cursive;
+  font-size: 17pt;
+  padding-top: 5px;
+}
+
+.lead-section {
+  background-color: $baseColor;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+@media #{$desktop} {
+  .lead-section {
+    min-height: 350px;
+  }
+}
+
+.grid-overlay{
+  position: absolute;
+  top:0;
+  width: 100%;
+  height: 100%;
+  background-repeat: repeat;
+  z-index: 1;
+}
+.lead-container{
+  position: relative;
+  z-index: 2;
+}
+
+p.split-2{
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+}
+
+.img-desc {
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  margin:0;
+  margin-top: 5px;
+  padding:5px 10px;
+}
+.my-email{
+  color: $baseColor;
+}
+
+// framework overrides
+::-moz-selection {
+  background: $baseColor;
+  color: white;
+}
+
+::selection {
+  background: $baseColor;
+  color: white;
+}
+
+.drz-link {
+  color: $baseColor;
+
+  &:hover {
+    color: lighten($baseColor, 15%);
+  }
+}
+
+#design, #contact {
+  background-color: #f7f7f7;
+}
+
+.footer-left {
+  color: rgba(255, 255, 255, 0.5);
+  float: left;
+}
+
+.drzSocialMedia-iconGithub {
+  &:before {
+    content: '\f092';
+  }
+}
+
+.footer-right {
+  float: left;
+  text-align: right;
+
+  [class^=drzSocialMedia-icon] {
+    color: rgba(255, 255, 255, 0.5);
+
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.drzSocialMedia {
+  text-align: right;
+}
+
+@media #{$mobile} {
+  .drzSocialMedia {
+    text-align: center;
+  }
+}
+
+.drzBtn-border .drzBtn {
+  color: $baseColor;
+
+  &:hover {
+    background-color: $baseColor;
+    color: white;
+  }
+}
+
+.drzBtn-border {
+  border-color: $baseColor;
+}
+
+.topScroll-button {
+  background-color: $baseColor;
+}

@@ -1,76 +1,74 @@
-var gulp = require('gulp');
-var less = require('gulp-less');
-var browserSync = require('browser-sync');
-var reload = browserSync.reload;
-var nodemon = require('gulp-nodemon');
-var LessAutoprefix = require('less-plugin-autoprefix');
-var autoprefix = new LessAutoprefix({
-  browsers: ['last 5 versions']
-});
-var cssmin = require('gulp-cssmin');
-var rename = require('gulp-rename');
-var minify = require('gulp-minify');
-var autoClose = require('browser-sync-close-hook');
-var imagemin = require('gulp-imagemin');
+const gulp = require('gulp');
+const babel = require('gulp-babel');
+const watch = require('gulp-watch');
+const browserSync = require('browser-sync');
+const autoClose = require('browser-sync-close-hook');
+const nodemon = require('gulp-nodemon');
+const sass = require('gulp-sass');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const minify = require('gulp-minify');
+const imagemin = require('gulp-imagemin');
+const ejs = require('gulp-ejs');
+// @TODO - add in vendor prefix settings
 
-gulp.task('less', function() {
-  gulp.src('less/layout.less')
-    .pipe(less({
-      plugins: [autoprefix]
-    })
-    .on('error', function (err) {
-      console.log(err);
-    })
-    )
-    .pipe(cssmin()
-    .on('error', function(err) {
-      console.log(err);
-    }))
-    .pipe(rename({
-      basename: "main",
-      suffix: '.min'
-    }))
-    .pipe(gulp.dest('dist/css'))
-    .on('end', function() {
-       browserSync.reload();
-    });
-});
+const reload = browserSync.reload;
 
-gulp.task('pattern-js', function() {
-  gulp.src('js/jquery.pattern-library.js')
-    .pipe(minify({
-      noSource: true,
-      ext:{
-          min:'.min.js'
-      }
-    }))
-    .pipe(gulp.dest('dist/js'))
-    .on('end', function() {
+const sassTask = function buildSass() {
+  return gulp.src('styles/**/*.scss')
+    .pipe(sass({ outputStyle: 'compressed' })
+    .on('error', sass.logError))
+    .pipe(rename('main.min.css'))
+    .pipe(gulp.dest('./dist/css'))
+    .on('end', () => {
+      console.log('Successfully Built SASS');
       browserSync.reload();
     });
+};
+
+const jsTask = function buildJS() {
+  return gulp.src('js/**/*.js')
+  .pipe(concat('app.js'))
+  .pipe(babel({
+    presets: ['env'],
+  }))
+  .pipe(minify({
+    ext: {
+      min: '.min.js',
+    },
+  }))
+  .pipe(gulp.dest('dist/js/'))
+  .on('end', () => {
+    console.log('Successfully Built JS');
+  });
+};
+
+const imgTask = function buildJS() {
+  return gulp.src('images/*')
+   .pipe(imagemin([
+     imagemin.optipng({ optimizationLevel: 5 }),
+   ]))
+   .pipe(gulp.dest('dist/images'))
+   .on('end', () => {
+     console.log('Successfully compressed images');
+   });
+};
+
+gulp.task('build-sass', sassTask);
+gulp.task('build-js', jsTask);
+gulp.task('build-images', imgTask);
+
+gulp.task('build-dist', () => {
+  gulp.src('index.ejs')
+   .pipe(ejs({}, {}, { ext: '.html' }))
+   .pipe(gulp.dest('./dist'));
+  // run sass/js tasks
+  sassTask();
+  jsTask();
+  imgTask();
 });
 
-gulp.task('init-js', function() {
-  gulp.src('js/init.js')
-    .pipe(minify({
-      noSource: true,
-      ext:{
-          min:'.min.js'
-      }
-    }))
-    .pipe(gulp.dest('dist/js'))
-    .on('end', function() {
-      browserSync.reload();
-    });
-});
-
-gulp.task('images', function(){
-  gulp.src('images/*')
-      .pipe(imagemin())
-      .pipe(gulp.dest('dist/images'));
-});
-
-gulp.task('browser-sync', ['nodemon'], function() {
+gulp.task('browser-sync', ['nodemon'], () => {
   browserSync.use({
     plugin() {},
     hooks: {
@@ -78,43 +76,47 @@ gulp.task('browser-sync', ['nodemon'], function() {
     },
   });
   browserSync({
-    proxy: "localhost:2002",
-    port: 2004,
+    proxy: 'localhost:3002',
+    port: 3003,
     notify: false,
-    ui: false
+    ui: false,
   });
 });
 
-gulp.task('nodemon', function (cb) {
-  var called = false;
+gulp.task('nodemon', (cb) => {
+  let called = false;
   return nodemon({
     script: 'server.js',
     ignore: [
       'gulpfile.js',
-      'node_modules/'
-    ]
+      'node_modules/',
+    ],
   })
-  .on('start', function () {
+  .on('start', () => {
     if (!called) {
       called = true;
       cb();
     }
   })
-  .on('restart', function () {
-    setTimeout(function () {
+  .on('restart', () => {
+    setTimeout(() => {
       reload({ stream: false });
     }, 1000);
   });
 });
 
-gulp.task('default', ['browser-sync', 'less', 'pattern-js', 'init-js', 'images'], function () {
-  gulp.watch([
-    'less/*'
-  ], ['less']);
-  gulp.watch([
-    'js/*'
-  ], ['pattern-js', 'init-js']);
-  gulp.watch([
-    'dist/index.html'
+gulp.task('default', [
+  'browser-sync',
+  'build-sass',
+  'build-js',
+], () => {
+  watch([
+    '**/*.ejs',
   ], reload);
+  gulp.watch([
+    'styles/**/*.scss',
+  ], ['build-sass']);
+  gulp.watch([
+    'js/**/*.js',
+  ], ['build-js']);
 });

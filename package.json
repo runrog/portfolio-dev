@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "gulp"
   },
   "repository": {
     "type": "git",
@@ -26,17 +26,24 @@
     "url": "https://github.com/runrog/runrog.github.io/issues"
   },
   "homepage": "https://github.com/runrog/runrog.github.io#readme",
+  "dependencies": {},
   "devDependencies": {
-    "browser-sync": "^2.18.8",
+    "babel-preset-env": "^1.4.0",
+    "browser-sync": "^2.18.11",
     "browser-sync-close-hook": "^1.0.5",
+    "ejs": "^2.5.6",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.2.0",
     "gulp": "^3.9.1",
-    "gulp-cssmin": "^0.1.7",
-    "gulp-imagemin": "^3.1.1",
-    "gulp-less": "^3.3.0",
-    "gulp-minify": "0.0.15",
+    "gulp-babel": "^6.1.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-ejs": "^3.0.1",
+    "gulp-imagemin": "^3.3.0",
+    "gulp-minify": "^1.0.0",
     "gulp-nodemon": "^2.2.1",
     "gulp-rename": "^1.2.2",
-    "less-plugin-autoprefix": "^1.5.1"
-  },
-  "dependencies": {}
+    "gulp-sass": "^3.1.0",
+    "gulp-watch": "^4.3.11"
+  }
 }

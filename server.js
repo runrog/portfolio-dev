@@ -1,65 +1,76 @@
-var http = require('http');
-var fs = require('fs');
-var path = require('path');
-var url = require("url");
-var port = 2002;
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const ejs = require('ejs');
 
-http.createServer(function (request, response) {
+const port = 3002;
 
-    var filePath = './dist' + request.url;
+http.createServer((request, response) => {
+  let filePath = `.${request.url}`;
 
-    if (filePath == './dist/'){
-      filePath = './dist/index.html';
-    }
+  if (filePath === './') {
+    filePath = './index.ejs';
+  }
 
-    // console.log(filePath + 'dist/');
+  const extname = path.extname(filePath);
 
-    var extname = path.extname(filePath);
-    var contentType = 'text/html';
-
-    if(extname == '.js'){
-      contentType = 'text/javascript';
-    }
-    if(extname == '.css'){
-      contentType = 'text/css';
-    }
-    if(extname == '.json'){
-      contentType = 'application/json';
-    }
-    if(extname == '.png'){
-      contentType = 'image/png';
-    }
-    if(extname == '.jpg'){
-      contentType = 'image/jpg';
-    }
-    if(extname == '.wav'){
-      contentType = 'audio/wav';
-    }
-    if(extname == '.svg'){
-      contentType = 'image/svg+xml';
-    }
-    if(extname =='.pdf'){
-      contentType = 'application/pdf';
-    }
-
-    fs.readFile(filePath, function(error, content) {
-      if (error) {
-        if(error.code == 'ENOENT'){
-            fs.readFile('./404.html', function(error, content) {
-              response.writeHead(200, { 'Content-Type': contentType });
-              response.end(content, 'utf-8');
-            });
-        }
-        else {
-            response.writeHead(500);
-            response.end('Sorry, check with the site admin for error: '+error.code+' ..\n');
-            response.end();
-        }
-      }
-      else {
-          response.writeHead(200, { 'Content-Type': contentType });
-          response.end(content, 'utf-8');
+    // Render our ejs
+  if (extname === '.ejs') {
+    ejs.renderFile(filePath, { env: 'dev' }, (err, str) => {
+      // render on success
+      if (!err) {
+        response.end(str);
+      } else {
+        // render or error
+        response.end('An error occurred, see error in terminal');
+        console.log(err);
       }
     });
+  }
 
+  let contentType = 'text/html';
+
+  if (extname === '.js') {
+    contentType = 'text/javascript';
+  }
+  if (extname === '.css') {
+    contentType = 'text/css';
+  }
+  if (extname === '.json') {
+    contentType = 'application/json';
+  }
+  if (extname === '.png') {
+    contentType = 'image/png';
+  }
+  if (extname === '.jpg') {
+    contentType = 'image/jpg';
+  }
+  if (extname === '.wav') {
+    contentType = 'audio/wav';
+  }
+  if (extname === '.svg') {
+    contentType = 'image/svg+xml';
+  }
+
+  if (extname =='.pdf') {
+    contentType = 'application/pdf';
+  }
+
+  fs.readFile(filePath, (error, content) => {
+    if (error) {
+      if (error.code === 'ENOENT') {
+        fs.readFile('./404.html', () => {
+          response.writeHead(200, { 'Content-Type': contentType });
+          response.end(content, 'utf-8');
+        });
+      } else {
+        response.writeHead(500);
+        response.end(`Sorry, check with the site admin for error: ${error.code} ..\n`);
+        response.end();
+      }
+    } else {
+      response.writeHead(200, { 'Content-Type': contentType });
+      response.end(content, 'utf-8');
+    }
+  });
 }).listen(port);
