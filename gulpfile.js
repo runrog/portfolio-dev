@@ -43,7 +43,7 @@ const jsTask = function buildJS() {
   });
 };
 
-const imgTask = function buildJS() {
+const imgTask = function buildImages() {
   return gulp.src('images/*')
    .pipe(imagemin([
      imagemin.optipng({ optimizationLevel: 5 }),
