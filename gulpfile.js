@@ -44,6 +44,7 @@ const jsTask = function buildJS() {
 };
 
 const imgTask = function buildImages() {
+  console.log('building images...');
   return gulp.src('images/*')
    .pipe(imagemin([
      imagemin.optipng({ optimizationLevel: 5 }),
