@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "gulp"
+    "start": "gulp",
+    "delpoy": "chmod 744 deploy.sh && ./deploy.sh"
   },
   "repository": {
     "type": "git",
